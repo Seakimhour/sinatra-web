@@ -38,6 +38,7 @@ GEM
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
     minitest (5.16.3)
+    multi_json (1.15.0)
     mustermann (2.0.2)
       ruby2_keywords (~> 0.0.1)
     nokogiri (1.13.8-x86_64-linux)
@@ -82,6 +83,12 @@ GEM
       rack (~> 2.2)
       rack-protection (= 2.2.2)
       tilt (~> 2.0)
+    sinatra-contrib (2.2.2)
+      multi_json
+      mustermann (~> 2.0)
+      rack-protection (= 2.2.2)
+      sinatra (= 2.2.2)
+      tilt (~> 2.0)
     smart_properties (1.17.0)
     tilt (2.0.11)
     tzinfo (2.0.5)
@@ -95,6 +102,7 @@ DEPENDENCIES
   erb_lint
   rubocop-fjord
   sinatra
+  sinatra-contrib
 
 BUNDLED WITH
    2.3.21

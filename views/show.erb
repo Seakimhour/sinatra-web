@@ -10,12 +10,12 @@
         <h1 class="text-lg font-bold">メモアプリ</h1>
       </div>
       <div class="flex-1 m-2 space-y-2">
-        <h4 class="font-bold"><%= memo['title'] %></h4>
-        <p><%= memo['content'] %></p>
+        <h4 class="font-bold"><%== memo['title'] %></h4>
+        <p><%== memo['content'] %></p>
       </div>
       <div class="flex flex-row justify-between">
-        <a href="<%= index %>/edit" class="py-1 px-4 border border-gray-400 rounded text-sm bg-gray-200">変更</a>
-        <form action="<%= index %>" method="POST">
+        <a href="<%== memo['id'] %>/edit" class="py-1 px-4 border border-gray-400 rounded text-sm bg-gray-200">変更</a>
+        <form action="<%== memo['id'] %>" method="POST">
           <input type="hidden" name="_method" value="DELETE">
           <input type="submit" value="削除" class="py-1 px-4 border border-gray-400 rounded text-sm bg-gray-200 cursor-pointer">
         </form>

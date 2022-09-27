@@ -12,8 +12,8 @@
       </div>
       <div class="m-2">
         <ol class="list-disc list-inside">
-          <% memos.each_with_index do |memo, i| %>
-            <li><a class="text-blue-400 visited:text-blue-800" href="/memos/<%= i %>"><%= memo['title'] %></a></li>
+          <% memos.each_with_index do |memo| %>
+            <li><a class="text-blue-400 visited:text-blue-800" href="/memos/<%== memo['id'] %>"><%== memo['title'] %></a></li>
           <% end %>
         </ol>
       </div>
