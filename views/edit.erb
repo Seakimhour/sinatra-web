@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>メモアプリ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="h-screen w-screen flex justify-center items-center bg-gray-100">
+    <main class="w-80 h-96 shadow bg-white p-4">
+      <div class="mb-4">
+        <h1 class="text-lg font-bold">メモアプリ</h1>
+      </div>
+      <form action="/memos/<%== memo['id'] %>" method="POST" class="m-2">
+        <input type="hidden" name="_method" value="PATCH">
+        <div class="mb-3">
+          <input name="title" type="text" value="<%== memo['title'] %>" class="w-full p-2 bg-gray-300 rounded shadow-inner">
+        </div>
+        <div class="mb-3">
+          <textarea name="content" rows=8 class="w-full p-2 bg-gray-300 rounded shadow-inner"><%== memo['content'] %></textarea>
+        </div>
+        <div class="text-center">
+          <input type="submit" value="変更" class="py-1 px-4 border border-gray-400 rounded text-sm bg-gray-200 cursor-pointer">
+        </div>
+      </form>
+    </main>
+  </body>
+</html>
