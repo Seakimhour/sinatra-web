@@ -2,13 +2,27 @@
 
 require 'sinatra'
 require 'sinatra/reloader'
-require 'json'
+require 'pg'
+
+# Database Schema
+# CREATE DATABASE memos;
+# CREATE TABLE memo (
+#     id BIGSERIAL NOT NULL PRIMARY KEY,
+#     title VARCHAR(200) NOT NULL,
+#     content VARCHAR(250) NOT NULL
+# );
+
+# Connections to the DB
+conn = PG.connect(dbname: 'memos')
+conn.prepare('get_memo', 'SELECT * FROM memo WHERE id = $1')
+conn.prepare('store_memo', 'INSERT INTO memo (title, content) VALUES ($1, $2)')
+conn.prepare('update_memo', 'UPDATE memo SET title = $1, content = $2 Where id = $3')
+conn.prepare('delete_memo', 'DELETE FROM memo Where id = $1')
 
 # TOP
 get '/' do
-  memos = JSON.parse(File.read('data.json'))
-  selected_memos = memos.reject { |element| element['status'] == 'deleted' }
-  erb :index, locals: { 'memos' => selected_memos }
+  memos = conn.exec('SELECT * FROM memo')
+  erb :index, locals: { 'memos' => memos }
 end
 
 # CREATE MEMO
@@ -18,48 +32,30 @@ end
 
 # SHOW MEMO
 get '/memos/:memo' do
-  memos = JSON.parse(File.read('data.json'))
-  index = memos.index { |element| element['id'] == params[:memo].to_i }
-  erb :show, locals: { 'memo' => memos[index] }
+  memo = conn.exec_prepared('get_memo', [params[:memo]])
+  erb :show, locals: { 'memo' => memo[0] }
 end
 
 # EDIT MEMO
 get '/memos/:memo/edit' do
-  memos = JSON.parse(File.read('data.json'))
-  index = memos.index { |element| element['id'] == params[:memo].to_i }
-  erb :edit, locals: { 'memo' => memos[index] }
+  memo = conn.exec_prepared('get_memo', [params[:memo]])
+  erb :edit, locals: { 'memo' => memo[0] }
 end
 
 # STORE MEMO
 post '/memos' do
-  memos = JSON.parse(File.read('data.json'))
-  memos.push(
-    {
-      'id' => memos.count + 1,
-      'title' => params[:title],
-      'content' => params[:content],
-      'status' => 'active'
-    }
-  )
-  File.open('data.json', 'w') { |f| f.puts memos.to_json }
+  conn.exec_prepared('store_memo', [params[:title], params[:content]])
   redirect '/'
 end
 
 # UPDATE MEMO
 patch '/memos/:memo' do
-  memos = JSON.parse(File.read('data.json'))
-  index = memos.index { |element| element['id'] == params[:memo].to_i }
-  memos[index]['title'] = params[:title]
-  memos[index]['content'] = params[:content]
-  File.open('data.json', 'w') { |f| f.puts memos.to_json }
-  redirect "/memos/#{memos[index]['id']}"
+  conn.exec_prepared('update_memo', [params[:title], params[:content], params[:memo]])
+  redirect "/memos/#{params[:memo]}"
 end
 
 # DELETE MEMO
 delete '/memos/:memo' do
-  memos = JSON.parse(File.read('data.json'))
-  index = memos.index { |element| element['id'] == params[:memo].to_i }
-  memos[index]['status'] = 'deleted'
-  File.open('data.json', 'w') { |f| f.puts memos.to_json }
+  conn.exec_prepared('delete_memo', [params[:memo]])
   redirect '/'
 end
